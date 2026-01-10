@@ -1,6 +1,6 @@
 using Gen
 
-@gen function change_point_model(total_days::Int)
+@gen function text_model(total_days::Int)
     # 1. Priors for the rates (average texts per day)
     lambda1 ~ gamma(1, 20) # Rate before the switch
     lambda2 ~ gamma(1, 20) # Rate after the swtich
@@ -26,10 +26,9 @@ function generate_text_data()
     constraints[:lambda2] = 40.0
     constraints[:tau] = 40
     
-    num_data_points = 70
+    num_data_points = 74
 
-    # Generate 70 days of data
-    (trace, _) = generate(change_point_model, (num_data_points,), constraints)
+    (trace, _) = generate(text_model, (num_data_points,), constraints)
     data = [trace[(:count, i)] for i in 1:num_data_points]
 
     return data
