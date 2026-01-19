@@ -15,3 +15,13 @@ function sample_temps_from_data(temps::Vector{Int}, n_samples::Int;
 
     return samples_int
 end
+
+function running_mean(x)
+    s = 0.0
+    out = similar(x, Float64)
+    for i in eachindex(x)
+        s += x[i]
+        out[i] = s / i
+    end
+    out
+end

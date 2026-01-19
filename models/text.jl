@@ -1,5 +1,9 @@
 using Gen
 
+true_tau = 40
+true_lambda1 = 10.0
+true_lambda2 = 40.0
+
 @gen function text_model(total_days::Int)
     # 1. Priors for the rates (average texts per day)
     lambda1 ~ gamma(1, 20) # Rate before the switch
@@ -22,9 +26,9 @@ function generate_text_data()
     # Let's pretend the switch happens on day 40
     # Rate before = 10 texts/day, Rate after = 40 texts/day
     constraints = choicemap()
-    constraints[:lambda1] = 10.0
-    constraints[:lambda2] = 40.0
-    constraints[:tau] = 40
+    constraints[:lambda1] = true_lambda1
+    constraints[:lambda2] = true_lambda2
+    constraints[:tau] = true_tau
     
     num_data_points = 74
 

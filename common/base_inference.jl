@@ -196,7 +196,9 @@ function hmc_inference(model::GenerativeFunction, model_args::Tuple;
     total_iters = burnin + n_samples * thin
 
     for it in 1:total_iters
-        # Gen version you have: hmc(trace, selection; L, eps, ...)
+        if it % 10 == 0
+            println(it)
+        end
         trace, _ = hmc(trace, sel; L=n_steps, eps=step_size)
 
         if it > burnin && (it - burnin) % thin == 0
