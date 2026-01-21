@@ -1,16 +1,11 @@
 include("challenger_inference.jl")
+include("../../common/utils.jl")
 
 n_iter = 2000
 
 cst_samples = run_custom_inference_challenger(n_iter)
 mh_samples  = run_mh_rw_challenger(n_iter)
 hmc_samples = run_hmc_challenger(n_iter)
-
-function split_samples(samples)
-    a = [s[1] for s in samples]
-    b = [s[2] for s in samples]
-    return a, b
-end
 
 cst_alpha, cst_beta = split_samples(cst_samples)
 mh_alpha,  mh_beta  = split_samples(mh_samples)

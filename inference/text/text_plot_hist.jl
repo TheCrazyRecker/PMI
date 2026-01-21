@@ -1,4 +1,5 @@
 include("text_inference_v2.jl")
+include("../../models/text.jl")
 
 n_iter = 10000
 
@@ -13,12 +14,7 @@ pf_tau = extract_param(pf_traces, :tau)
 pf_l1  = extract_param(pf_traces, :lambda1)
 pf_l2  = extract_param(pf_traces, :lambda2)
 
-# Ground truth from your generator (adjust if needed)
-true_tau = 40
-true_l1  = 10.0
-true_l2  = 40.0
-
-# ---------- Helpers ----------
+#Helpers for nicer plots
 
 # Discrete PMF bar plot for tau (much nicer than histogram for an integer latent)
 function tau_pmf_plot(tau_samples::Vector{Int}, N::Int; title="")

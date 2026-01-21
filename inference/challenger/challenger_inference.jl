@@ -8,17 +8,9 @@ include("../../models/challenger.jl")
 include("../../common/base_inference.jl")
 include("../../common/utils.jl")
 
+#Generates data
 observations_vector = generate_challenger_data(challenger_temps)
-
-function vector_to_choicemap(data_vector)
-    cm = choicemap()
-    for (i, val) in enumerate(data_vector)
-        cm[(:failure, i)] = val
-    end
-    return cm
-end
-
-const obs_choicemap = vector_to_choicemap(observations_vector)
+const obs_choicemap = vector_to_choicemap(observations_vector; prefix=:failure)
 
 
 @gen function challenger_ridge_proposal(trace::Gen.Trace,
@@ -83,9 +75,9 @@ function run_custom_inference_challenger(n_samples::Int=5000; burnin::Int=2000)
 end
 
 
-
+#Following 4 methods are used to run the baseline models for the challenger data (called from the plot file)
 function run_mh_rw_challenger(n_samples::Int)
-    println("Running MH (Random-Walk baseline)...")
+    println("Running MH (baseline)")
     traces = mh_inference(challenger_model, (challenger_temps,);
         observations=obs_choicemap,
         latent_addrs=[:alpha, :beta],
@@ -93,14 +85,13 @@ function run_mh_rw_challenger(n_samples::Int)
         burnin=0,
         thin=1,
         init_constraints=choicemap((:alpha, 0.0), (:beta, 0.0)),
-        rw_sigmas=[0.05, 1.0]   # tune if you want
+        rw_sigmas=[0.05, 1.0]
     )
     return traces_to_samples(traces, [:alpha, :beta])
 end
 
 function run_hmc_challenger(n_samples::Int)
-    println("Running HMC...")
-
+    println("Running HMC")
     traces = hmc_inference(challenger_model, (challenger_temps,);
         observations=obs_choicemap,
         latent_addrs=[:alpha, :beta],
@@ -117,7 +108,7 @@ end
 
 
 function run_is_challenger(n_samples::Int)
-    println("Running Importance Sampling (resampled)...")
+    println("Running Importance Sampling")
     traces, _ = is_inference(challenger_model, (challenger_temps,);
         observations=obs_choicemap,
         n_particles=n_samples,
@@ -127,7 +118,7 @@ function run_is_challenger(n_samples::Int)
 end
 
 function run_pf_challenger(n_samples::Int)
-    println("Running Particle Filter / SMC (resampling by ESS)...")
+    println("Running Particle Filter")
     obs_order = [(:failure, i) for i in 1:length(challenger_temps)]
     particles, _ = pf_inference(challenger_model, (challenger_temps,);
         observations=obs_choicemap,

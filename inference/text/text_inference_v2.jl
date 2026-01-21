@@ -7,17 +7,8 @@ include("../../models/text.jl")
 include("../../common/base_inference.jl")
 include("../../common/utils.jl")
 
-function counts_to_choicemap(counts::Vector{Int})
-    cm = choicemap()
-    for (i, val) in enumerate(counts)
-        cm[(:count, i)] = val
-    end
-    return cm
-end
 
-const obs_choicemap = counts_to_choicemap(observations)
-
-
+const obs_choicemap = vector_to_choicemap(observations; prefix=:count)
 
 #This calculates two metrics: number of days of one segment and the sum of its counts. It does this for both segments
 function segment_stats(counts::Vector{Int}, tau::Int)

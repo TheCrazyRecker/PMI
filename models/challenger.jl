@@ -8,6 +8,7 @@ actual_challenger_temps = [
 ]
 
 challenger_temps = sample_temps_from_data(actual_challenger_temps, 100)
+# challenger_temps = actual_challenger_temps
 
 true_alpha = 0.23
 true_beta = -15.0

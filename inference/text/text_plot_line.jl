@@ -1,8 +1,5 @@
 include("text_inference_v2.jl")
-
-function extract_param(traces, addr)
-    return [tr[addr] for tr in traces]
-end
+include("../../common/utils.jl")
 
 custom = custom_text_inference_mh_gibbs(observations; niter=20_000, burnin=5_000, thin=10)
 n_iter = min(2000, length(custom.taus))
