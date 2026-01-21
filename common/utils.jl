@@ -46,9 +46,65 @@ function split_samples(samples)
     return a, b
 end
 
-#More generic method that gets certain param from tuple
+#more general
 function extract_param(traces, addr)
     return [tr[addr] for tr in traces]
 end
 
-#Next methods are for making the plots look nicer
+#Plotting helper
+# Discrete PMF bar plot for tau (much nicer than histogram for an integer latent)
+function tau_pmf_plot(tau_samples::Vector{Int}, N::Int; title="")
+    counts = zeros(Int, N)
+    for τ in tau_samples
+        if 1 <= τ <= N
+            counts[τ] += 1
+        end
+    end
+    probs = counts ./ sum(counts)
+
+    p = bar(1:N, probs;
+        xlabel="tau",
+        ylabel="Probability",
+        title=title,
+        legend=false,
+        xlims=(1, N),
+        ylims=(0, 1.05*maximum(probs))
+    )
+    vline!(p, [true_tau], linestyle=:dash, label=nothing)
+    return p
+end
+
+# Consistent histogram for continuous lambdas
+function lambda_hist_plot(x::Vector{<:Real}; title="", xlabel="", truth=nothing, xlims=nothing)
+    p = histogram(x;
+        bins=50,
+        normalize=true,
+        xlabel=xlabel,
+        ylabel="Density",
+        title=title,
+        legend=false
+    )
+    if xlims !== nothing
+        plot!(p, xlims=xlims)
+    end
+    if truth !== nothing
+        vline!(p, [truth], linestyle=:dash, label=nothing)
+    end
+    return p
+end
+
+# Choose shared x-limits for lambda plots (IS vs PF comparable)
+function shared_xlim(a::Vector{<:Real}, b::Vector{<:Real}; pad_frac=0.15)
+    lo = min(minimum(a), minimum(b))
+    hi = max(maximum(a), maximum(b))
+    if hi == lo
+        # handle extreme degeneracy (all samples identical)
+        lo -= 1
+        hi += 1
+    else
+        pad = pad_frac * (hi - lo)
+        lo -= pad
+        hi += pad
+    end
+    return (lo, hi)
+end

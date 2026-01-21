@@ -49,10 +49,10 @@ function mh_tau_step(counts::Vector{Int}, tau::Int, λ1::Float64, λ2::Float64; 
     # - if tau_prop = tau - 1: day (tau-1) switches from segment1 -> segment2
     if tau_prop == tau + 1
         i = tau
-        logα = logpdf(Poisson(λ1), counts[i]) - logpdf(Poisson(λ2), counts[i])
+        logα = Distributions.logpdf(Poisson(λ1), counts[i]) - Distributions.logpdf(Poisson(λ2), counts[i])
     else
         i = tau - 1
-        logα = logpdf(Poisson(λ2), counts[i]) - logpdf(Poisson(λ1), counts[i])
+        logα = Distributions.logpdf(Poisson(λ2), counts[i]) - Distributions.logpdf(Poisson(λ1), counts[i])
     end
 
     if log(rand(rng)) < logα
@@ -100,6 +100,7 @@ end
 N = length(observations)
 
 function run_hmc_text(n_samples::Int)
+    println("Running HMC")
     traces = hmc_inference(text_model, (N,);
         observations=obs_choicemap,
         latent_addrs=[:lambda1, :lambda2],   # HMC only on continuous vars
@@ -114,6 +115,7 @@ function run_hmc_text(n_samples::Int)
 end
 
 function run_is_text(n_samples::Int)
+    println("Running IS")
     traces, _ = is_inference(text_model, (N,);
         observations=obs_choicemap,
         n_particles=n_samples,
@@ -123,6 +125,7 @@ function run_is_text(n_samples::Int)
 end
 
 function run_pf_text(n_samples::Int)
+    println("Running PF")
     obs_order = [(:count, i) for i in 1:N]
     particles, _ = pf_inference(text_model, (N,);
         observations=obs_choicemap,

@@ -1,5 +1,8 @@
 include("text_inference_v2.jl")
-include("../../common/utils.jl")
+
+function extract_param(traces, addr)
+    return [tr[addr] for tr in traces]
+end
 
 custom = custom_text_inference_mh_gibbs(observations; niter=20_000, burnin=5_000, thin=10)
 n_iter = min(2000, length(custom.taus))
@@ -27,17 +30,5 @@ l2_plot = plot(rm_c_l2, title="Running mean of lambda2", xlabel="Iteration / Sam
 plot!(l2_plot, rm_hmc_l2, label="HMC")
 hline!(l2_plot, [true_lambda2], linestyle=:dash, label="true")
 
-c_hist = histogram(
-    c_tau;
-    bins=tau_bins,
-    normalize=true,
-    xlabel="tau",
-    ylabel="Probability",
-    title="Custom: τ distribution",
-    label=nothing
-)
-
-display(c_hist)
-
-# combined = plot(l1_plot, l2_plot, layout=(2, 1), size=(900, 1200))
-# display(combined)
+combined = plot(l1_plot, l2_plot, layout=(2, 1), size=(900, 1200))
+display(combined)
