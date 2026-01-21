@@ -1,0 +1,1 @@
+If you wanna run the code, run the Julia files under `/inference/[challenger/text]/plot_..._...`. These files will result in the plots given in the report. Keep in mind they can change significantly from what's in the report due to the stochastic nature of the models. Have fun! 

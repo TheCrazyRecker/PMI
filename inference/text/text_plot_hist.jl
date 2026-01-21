@@ -18,11 +18,8 @@ pf_tau = extract_param(pf_traces, :tau)
 pf_l1  = extract_param(pf_traces, :lambda1)
 pf_l2  = extract_param(pf_traces, :lambda2)
 
-#Helpers for nicer plots
-
 xl1 = shared_xlim(is_l1, pf_l1)
 xl2 = shared_xlim(is_l2, pf_l2)
-# ---------- Plots ----------
 
 p_is_tau = tau_pmf_plot(is_tau, N; title="IS: τ PMF")
 p_is_l1  = lambda_hist_plot(is_l1; title="IS: λ1 posterior", xlabel="lambda1", truth=true_l1, xlims=xl1)
